@@ -187,12 +187,12 @@ defmodule Cluster.Strategy.Kubernetes.DNSSRV do
     app_name = Keyword.fetch!(config, :application_name)
     service = Keyword.fetch!(config, :service)
     namespace = Keyword.fetch!(config, :namespace)
-    service_k8s_path = "#{service}.#{namespace}.svc.cluster.local."
+    pod_k8s_path = "#{namespace}.pod.cluster.local."
     resolver = Keyword.get(config, :resolver, &:inet_res.getbyname(&1, :srv))
 
     cond do
       app_name != nil and service != nil ->
-        headless_service = to_charlist(service_k8s_path)
+        headless_service = to_charlist(pod_k8s_path)
 
         case resolver.(headless_service) do
           {:ok, {:hostent, _, _, :srv, _count, addresses}} ->
